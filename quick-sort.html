@@ -1,0 +1,838 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>快速排序的细节-20211006 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="vm-route.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    首页
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="vm-route.html">
+            
+                <a href="vm-route.html">
+            
+                    
+                    使用虚拟机作为路由器-20211225
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3" data-path="quick-sort.html">
+            
+                <a href="quick-sort.html">
+            
+                    
+                    快速排序的细节-20211006
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >快速排序的细节-20211006</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x7684;&#x7EC6;&#x8282;">&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x7684;&#x7EC6;&#x8282;</h1>
+<p>&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x7684;&#x6838;&#x5FC3;&#x601D;&#x60F3;&#x662F;&#x5728;&#x5F85;&#x6392;&#x5E8F;&#x6570;&#x7EC4;&#x9700;&#x8981;&#x5904;&#x7406;&#x7684;&#x8303;&#x56F4;&#x5185;&#x9009;&#x4E00;&#x4E2A;&#x67A2;&#x7EBD;&#xFF0C;&#x628A;&#x5C0F;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#x503C;&#x7684;&#x5143;&#x7D20;&#x90FD;&#x79FB;&#x5230;&#x6570;&#x7EC4;&#x5DE6;&#x8FB9;&#xFF0C;&#x5927;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#x503C;&#x7684;&#x5143;&#x7D20;&#x90FD;&#x79FB;&#x5230;&#x53F3;&#x8FB9;&#xFF0C;&#x7136;&#x540E;&#x518D;&#x5BF9;&#x4E24;&#x8FB9;&#x7684;&#x6570;&#x7EC4;&#x9012;&#x5F52;&#x8C03;&#x7528;&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x51FD;&#x6570;&#xFF0C;&#x76F4;&#x5230;&#x5904;&#x7406;&#x8303;&#x56F4;&#x53EA;&#x5269;&#x4E0B;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x7684;&#x6838;&#x5FC3;&#x5C31;&#x662F;&#x5212;&#x5206;&#x6570;&#x7EC4;&#xFF0C;&#x8FD9;&#x4E5F;&#x662F;&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x7684;&#x96BE;&#x70B9;&#x3002;&#x5F88;&#x660E;&#x663E;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x4E24;&#x4E2A;&#x6307;&#x9488;&#xFF0C;&#x8BA9;&#x5DE6;&#x8FB9;&#x7684;&#x6307;&#x9488;&#x6307;&#x5411;&#x5927;&#x4E8E;&#x67A2;&#x7EBD;&#x7684;&#x5143;&#x7D20;&#xFF0C;&#x53F3;&#x8FB9;&#x7684;&#x6307;&#x9488;&#x6307;&#x5411;&#x5C0F;&#x4E8E;&#x67A2;&#x7EBD;&#x7684;&#x5143;&#x7D20;&#xFF0C;&#x7136;&#x540E;&#x4EA4;&#x6362;&#x8FD9;&#x4E24;&#x4E2A;&#x6307;&#x9488;&#x6307;&#x5411;&#x7684;&#x5143;&#x7D20;&#x3002;&#x8FD9;&#x4E24;&#x4E2A;&#x6307;&#x9488;&#x53EF;&#x4EE5;&#x4ECE;&#x4E24;&#x7AEF;&#x5F80;&#x4E2D;&#x95F4;&#x79FB;&#x52A8;(&#x4EE5;&#x4E0B;&#x7B80;&#x79F0;&#x53CC;&#x6307;&#x9488;)&#xFF1B;&#x4E5F;&#x53EF;&#x4EE5;&#x90FD;&#x5F80;&#x540C;&#x4E00;&#x4E2A;&#x65B9;&#x5411;&#x79FB;&#x52A8;&#xFF0C;&#x53EA;&#x662F;&#x5176;&#x4E2D;&#x4E00;&#x4E2A;&#x6307;&#x9488;&#x79FB;&#x52A8;&#x5F97;&#x5FEB;&#x4E00;&#x4E9B;(&#x4EE5;&#x4E0B;&#x7B80;&#x79F0;&#x5FEB;&#x6162;&#x6307;&#x9488;)&#x3002;</p>
+<h2 id="&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;&#x76F4;&#x63A5;&#x4EA4;&#x6362;">&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;(&#x76F4;&#x63A5;&#x4EA4;&#x6362;)</h2>
+<p>&#x76F4;&#x63A5;&#x7F16;&#x5199;&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;&#x51FD;&#x6570;&#x53EF;&#x80FD;&#x6BD4;&#x8F83;&#x56F0;&#x96BE;&#xFF0C;&#x6211;&#x4EEC;&#x5148;&#x770B;&#x4E24;&#x4E2A;&#x6BD4;&#x8F83;&#x7B80;&#x5355;&#x7684;&#x53CC;&#x6307;&#x9488;&#x9898;&#x76EE;&#x3002;</p>
+<h4 id="leetcode-344-&#x53CD;&#x8F6C;&#x5B57;&#x7B26;&#x4E32;"><a href="https://leetcode-cn.com/problems/reverse-string/" target="_blank">LeetCode 344. &#x53CD;&#x8F6C;&#x5B57;&#x7B26;&#x4E32;</a></h4>
+<p>&#x8FD9;&#x9053;&#x9898;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#x53CC;&#x6307;&#x9488;&#x6307;&#x5411;&#x7684;&#x5143;&#x7D20;&#x5373;&#x53EF;&#xFF0C;&#x7136;&#x540E;left&#x6307;&#x9488;&#x5411;&#x53F3;&#x79FB;&#x52A8;&#x4E00;&#x683C;&#xFF0C;right&#x6307;&#x9488;&#x5411;&#x5DE6;&#x79FB;&#x52A8;&#x4E00;&#x683C;&#x3002;&#x5F88;&#x660E;&#x663E;&#xFF0C;&#x53EA;&#x6709;left &lt; right&#x65F6;&#x6211;&#x4EEC;&#x624D;&#x9700;&#x8981;&#x8FDB;&#x884C;&#x4EA4;&#x6362;&#x3002;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x662F;&#x5426;&#x6B63;&#x786E;&#x5904;&#x7406;&#x4E86;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x7684;&#x6307;&#x9488;&#x8D8A;&#x754C;&#x7684;&#x60C5;&#x51B5;&#x3002;&#x8FD9;&#x91CC;&#x6307;&#x9488;&#x786E;&#x5B9E;&#x6709;&#x53EF;&#x80FD;&#x8D8A;&#x754C;(&#x6BD4;&#x5982;&#x6570;&#x7EC4;&#x53EA;&#x6709;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x90A3;&#x4E48;&#x5B8C;&#x6210;&#x4E00;&#x6B21;&#x79FB;&#x52A8;&#x540E; left == 1&#xFF0C; right == -1)&#xFF0C;&#x4F46;&#x662F;&#x6BCF;&#x4E2A;&#x6307;&#x9488;&#x6BCF;&#x6B21;&#x53EA;&#x79FB;&#x52A8;&#x4E00;&#x683C;&#xFF0C;&#x800C;&#x4E14;&#x79FB;&#x52A8;&#x540E;&#x90FD;&#x4F1A;&#x68C0;&#x6D4B;&#x662F;&#x5426;&#x6709;left &lt; right&#xFF0C;&#x5982;&#x679C;&#x4E0D;&#x6EE1;&#x8DB3;left &lt; right&#xFF0C;&#x90A3;&#x4E48;&#x4E0D;&#x4F1A;&#x8BBF;&#x95EE;&#x6570;&#x7EC4;&#x3002;&#x56E0;&#x6B64;&#x53EA;&#x8981;&#x6570;&#x7EC4;&#x975E;&#x7A7A;&#xFF0C;&#x8FD9;&#x6BB5;&#x4EE3;&#x7801;&#x4E0D;&#x4F1A;&#x51FA;&#x73B0;&#x6570;&#x7EC4;&#x4E0B;&#x6807;&#x8D8A;&#x754C;&#x7684;&#x8FD0;&#x884C;&#x65F6;&#x5F02;&#x5E38;&#x3002;</p>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">reverseString</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">char</span>[] s)</span> </span>{
+        <span class="hljs-keyword">if</span>(s == <span class="hljs-keyword">null</span> || s.length == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> left = <span class="hljs-number">0</span>, right = s.length - <span class="hljs-number">1</span>; left &lt; right; ++left, --right){
+            <span class="hljs-keyword">final</span> <span class="hljs-keyword">char</span> temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+        }
+    }
+}
+</code></pre>
+<h4 id="leetcode-905-&#x6309;&#x5947;&#x5076;&#x6392;&#x5E8F;&#x6570;&#x7EC4;"><a href="https://leetcode-cn.com/problems/sort-array-by-parity/" target="_blank">LeetCode 905. &#x6309;&#x5947;&#x5076;&#x6392;&#x5E8F;&#x6570;&#x7EC4;</a></h4>
+<p>&#x8FD9;&#x9053;&#x9898;&#x4E5F;&#x662F;&#x53CC;&#x6307;&#x9488;&#xFF0C;&#x4E0D;&#x8FC7;&#x4E0D;&#x662F;&#x6BCF;&#x79FB;&#x52A8;&#x4E00;&#x683C;&#x90FD;&#x8981;&#x4EA4;&#x6362;&#xFF0C;&#x800C;&#x662F;&#x53D1;&#x73B0;&#x5DE6;&#x8FB9;&#x6307;&#x9488;&#x5E76;&#x975E;&#x6307;&#x5411;&#x5076;&#x6570;&#xFF0C;&#x53F3;&#x8FB9;&#x6307;&#x9488;&#x5E76;&#x975E;&#x6307;&#x5411;&#x5947;&#x6570;&#x65F6;&#x518D;&#x4EA4;&#x6362;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x6BCF;&#x4E2A;&#x6307;&#x9488;&#x6BCF;&#x6B21;&#x53EF;&#x80FD;&#x4E0D;&#x53EA;&#x662F;&#x79FB;&#x52A8;&#x4E00;&#x683C;&#xFF0C;&#x800C;&#x662F;&#x79FB;&#x52A8;&#x5F88;&#x591A;&#x683C;&#xFF0C;&#x9700;&#x8981;&#x4F7F;&#x7528;while&#x8BED;&#x53E5;&#x3002;&#x5BB9;&#x6613;&#x60F3;&#x5230;&#x9700;&#x8981;&#x4E0B;&#x9762;&#x8FD9;&#x4E24;&#x4E2A;while&#x8BED;&#x53E5;</p>
+<pre><code class="lang-java"><span class="hljs-keyword">while</span> ((nums[left] &amp; <span class="hljs-number">1</span>) == <span class="hljs-number">0</span>) ++left;
+<span class="hljs-keyword">while</span> ((nums[right] &amp; <span class="hljs-number">1</span>) != <span class="hljs-number">0</span>) --right;
+</code></pre>
+<p>&#x5F88;&#x9057;&#x61BE;&#xFF0C;&#x8FD9;&#x6837;&#x5199;&#x662F;&#x9519;&#x7684;&#xFF0C;&#x6211;&#x4EEC;&#x4E0D;&#x80FD;&#x76F4;&#x63A5;&#x628A;&#x8FD9;&#x4E24;&#x4E2A;while&#x52A0;&#x5230; reverseString &#x51FD;&#x6570;&#x91CC;&#x9762;&#x3002;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;&#x4E0D;&#x4EC5;&#x5728;for&#x8BED;&#x53E5;&#x7684;&#x5C0F;&#x62EC;&#x53F7;&#x91CC;&#x9762;&#x79FB;&#x52A8;&#x4E86;&#x6307;&#x9488;&#xFF0C;&#x8FD8;&#x5728;&#x5927;&#x62EC;&#x53F7;&#x91CC;&#x7684;while&#x8BED;&#x53E5;&#x79FB;&#x52A8;&#x4E86;&#x6307;&#x9488;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x9700;&#x8981;&#x5728;while&#x8BED;&#x53E5;&#x4E0B;&#x9762;&#x68C0;&#x6D4B;&#x662F;&#x5426;&#x6709;left &lt; right&#x3002;&#x66F4;&#x9EBB;&#x70E6;&#x7684;&#x4E8B;&#x60C5;&#x8FD8;&#x5728;&#x540E;&#x9762;&#xFF0C;&#x5982;&#x679C;&#x6570;&#x7EC4;&#x91CC;&#x9762;&#x5168;&#x662F;&#x5947;&#x6570;(&#x6216;&#x8005;&#x5076;&#x6570;)&#xFF0C;&#x90A3;&#x4E48;&#x5176;&#x4E2D;&#x4E00;&#x4E2A;&#x6307;&#x9488;&#x4F1A;&#x8D8A;&#x754C;&#xFF0C;&#x7531;&#x4E8E;while&#x8BED;&#x53E5;&#x5185;&#x5B58;&#x5728;&#x6570;&#x7EC4;&#x8BBF;&#x95EE;&#xFF0C;&#x56E0;&#x6B64;while&#x8BED;&#x53E5;&#x5185;&#x4F1A;&#x53D1;&#x751F;&#x6570;&#x7EC4;&#x4E0B;&#x6807;&#x8D8A;&#x754C;&#x5F02;&#x5E38;&#x3002;&#x56E0;&#x6B64;&#xFF0C;&#x6240;&#x6709;&#x7684;while&#x8BED;&#x53E5;&#x90FD;&#x8981;&#x52A0;&#x4E0A;left &lt; right&#x7684;&#x68C0;&#x6D4B;&#x3002;&#x7ECF;&#x8FC7;&#x5C0F;&#x5FC3;&#x7684;&#x5206;&#x6790;&#x540E;&#xFF0C;&#x6211;&#x5F97;&#x5230;&#x4E86;&#x4E0B;&#x9762;&#x7684;&#x4EE3;&#x7801;</p>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArrayByParity(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        <span class="hljs-keyword">if</span>(nums == <span class="hljs-keyword">null</span> || nums.length == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> nums;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> left = <span class="hljs-number">0</span>, right = nums.length - <span class="hljs-number">1</span>; left &lt; right; ++left, --right){
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; (nums[left] &amp; <span class="hljs-number">1</span>) == <span class="hljs-number">0</span>) ++left;
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; (nums[right] &amp; <span class="hljs-number">1</span>) != <span class="hljs-number">0</span>) --right;
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+        }
+        <span class="hljs-keyword">return</span> nums;
+    }
+}
+</code></pre>
+<h4 id="leetcode-912-&#x6392;&#x5E8F;&#x6570;&#x7EC4;"><a href="https://leetcode-cn.com/problems/sort-an-array/" target="_blank">LeetCode 912. &#x6392;&#x5E8F;&#x6570;&#x7EC4;</a></h4>
+<p>&#x6709;&#x4E86;&#x8FD9;&#x4E9B;&#x94FA;&#x57AB;&#xFF0C;&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x5F00;&#x59CB;&#x5206;&#x6790;&#x53CC;&#x6307;&#x9488;&#x7684;&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x5212;&#x5206;&#x51FD;&#x6570;&#x3002;&#x5F88;&#x660E;&#x663E;&#xFF0C;&#x5212;&#x5206;&#x51FD;&#x6570;&#x7684;&#x4EE3;&#x7801;&#x5E94;&#x8BE5;&#x4E0E; sortArrayByParity &#x51FD;&#x6570;&#x7C7B;&#x4F3C;&#x3002;&#x4F46;&#x662F;&#xFF0C;&#x6211;&#x4EEC;&#x4E0D;&#x80FD;&#x76F4;&#x63A5;&#x8FD9;&#x6837;&#x5199;</p>
+<pre><code class="lang-java"><span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> left = <span class="hljs-number">0</span>, right = nums.length - <span class="hljs-number">1</span>; left &lt; right; ++left, --right){
+    <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; nums[left] &lt; pivot) ++left;
+    <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; nums[left] &gt; pivot) --right;
+    <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+    swap(nums, left, right);
+}
+</code></pre>
+<p>&#x539F;&#x56E0;&#x662F;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x628A;&#x67A2;&#x7EBD;&#x653E;&#x5728;&#x6B63;&#x786E;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x800C;&#x6B63;&#x786E;&#x7684;&#x4F4D;&#x7F6E;&#x53EA;&#x6709;&#x5728;for&#x5FAA;&#x73AF;&#x6267;&#x884C;&#x5B8C;&#x624D;&#x77E5;&#x9053;&#x3002;</p>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x80FD;&#x8FD8;&#x51FA;&#x73B0;&#x4E86;&#x4E00;&#x4E2A;&#x7591;&#x95EE;&#xFF0C;&#x4E3A;&#x4EC0;&#x4E48;while&#x7684;&#x5224;&#x65AD;&#x662F; nums[left] &lt; pivot &#x548C; nums[left] &gt; pivot&#xFF08;&#x4EE5;&#x4E0B;&#x7B80;&#x79F0;&#x65B9;&#x6848;1&#xFF09;&#xFF0C;&#x800C;&#x4E0D;&#x662F; &lt;= &#x548C; &gt;=&#xFF08;&#x4EE5;&#x4E0B;&#x7B80;&#x79F0;&#x65B9;&#x6848;2&#xFF09; &#x3002;&#x4E8B;&#x5B9E;&#x4E0A;&#x8FD9;&#x4E24;&#x79CD;&#x5224;&#x65AD;&#x90FD;&#x53EF;&#x4EE5;&#xFF0C;&#x4F46;&#x662F;&#x9ED1;&#x76AE;&#x4E66;<sup><a href="#fn_1" id="reffn_1">1</a></sup>&#x6307;&#x51FA;&#xFF0C;&#x5982;&#x679C;&#x6570;&#x7EC4;&#x4E2D;&#x67A2;&#x7EBD;&#x51FA;&#x73B0;&#x4E86;&#x591A;&#x6B21;&#xFF0C;&#x4F7F;&#x7528;&#x65B9;&#x6848;1&#x53EF;&#x907F;&#x514D;&#x5212;&#x5206;&#x51FA;&#x7684;&#x4E24;&#x4E2A;&#x5B50;&#x6570;&#x7EC4;&#x7684;&#x5927;&#x5C0F;&#x76F8;&#x5DEE;&#x592A;&#x5927;&#xFF0C;&#x4ECE;&#x800C;&#x51FA;&#x73B0;&#x6700;&#x574F;&#x7684;O(n^2)&#x7684;&#x60C5;&#x51B5;&#x3002;&#x6B64;&#x5916;&#xFF0C;&#x76EE;&#x524D;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x65B9;&#x6848;1&#x7684;&#x5224;&#x65AD;&#xFF0C;&#x8FD8;&#x6709;&#x52A9;&#x4E8E;&#x51CF;&#x5C11;&#x6570;&#x7EC4;&#x8D8A;&#x754C;&#x7684;&#x53EF;&#x80FD;&#x6027;&#xFF0C;&#x51CF;&#x5C11;&#x4E00;&#x4E9B;&#x5176;&#x4ED6;&#x7684;&#x9EBB;&#x70E6;&#xFF0C;&#x5177;&#x4F53;&#x60C5;&#x51B5;&#x4E0B;&#x9762;&#x4F1A;&#x5206;&#x6790;&#x3002;</p>
+<p>&#x8003;&#x8651;&#x8FD9;&#x6837;&#x4E00;&#x4E2A;&#x6570;&#x7EC4;&#xFF0C;[3,1,2,4,0]&#xFF0C;&#x6211;&#x4EEC;&#x9009;&#x62E9;&#x7B2C;0&#x4E2A;&#x5143;&#x7D20;&#x4F5C;&#x4E3A;&#x67A2;&#x7EBD;&#xFF0C;&#x5373;pivot == 3</p>
+<p>&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x65B9;&#x6848;1&#xFF0C;&#x73B0;&#x5728;right&#x6307;&#x5411;&#x5143;&#x7D20;0&#xFF0C;left&#x6307;&#x5411;&#x5143;&#x7D20;3&#xFF0C;&#x4E8E;&#x662F;&#x6570;&#x7EC4;&#x53D8;&#x6210;&#x4E86;[0,1,2,4,3]&#xFF0C;&#x5F88;&#x660E;&#x663E;&#xFF0C;&#x67A2;&#x7EBD;&#x6CA1;&#x6709;&#x653E;&#x5728;&#x6B63;&#x786E;&#x7684;&#x5730;&#x65B9;&#x3002;&#x5373;&#x4F7F;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x65B9;&#x6848;2&#x4E5F;&#x662F;&#x5982;&#x6B64;&#x3002;&#x539F;&#x56E0;&#x5728;&#x4E8E;&#xFF0C;&#x5F53;&#x67D0;&#x4E2A;&#x6307;&#x9488;&#x505C;&#x5728;&#x67A2;&#x7EBD;&#x65F6;&#xFF0C;&#x65E0;&#x8BBA;&#x6211;&#x4EEC;&#x662F;&#x5426;&#x9009;&#x62E9;&#x4EA4;&#x6362;&#x53CC;&#x6307;&#x9488;&#x6307;&#x5411;&#x7684;&#x5143;&#x7D20;&#xFF0C;&#x90FD;&#x662F;&#x6781;&#x5176;&#x6B66;&#x65AD;&#x7684;&#xFF0C;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;&#x53EF;&#x80FD;&#x8FD8;&#x6709;&#x4E00;&#x4E9B;&#x5143;&#x7D20;&#x8FD8;&#x6CA1;&#x68C0;&#x6D4B;&#x548C;&#x4EA4;&#x6362;&#xFF0C;&#x6B64;&#x65F6;&#x5E76;&#x4E0D;&#x77E5;&#x9053;&#x67A2;&#x7EBD;&#x5E94;&#x8BE5;&#x653E;&#x5728;&#x54EA;&#x3002;&#x6240;&#x4EE5;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x8003;&#x8651;&#x5148;&#x628A;&#x67A2;&#x7EBD;&#x79FB;&#x5230;&#x5904;&#x7406;&#x8303;&#x56F4;&#x4E4B;&#x5916;&#xFF0C;for&#x5FAA;&#x73AF;&#x6267;&#x884C;&#x5B8C;&#x540E;&#xFF0C;&#x518D;&#x628A;&#x67A2;&#x7EBD;&#x653E;&#x8FDB;&#x53BB;</p>
+<pre><code class="lang-java"><span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+<span class="hljs-keyword">int</span> left = start;
+swap(array, pivotPos, end);
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> right = end - <span class="hljs-number">1</span>; ; ++left, --right){
+    <span class="hljs-keyword">while</span> (array[left] &lt; pivot) ++left;
+    <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; array[right] &gt; pivot) --right;
+    <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+    swap(array, left, right);
+}
+swap(array, left, end);
+</code></pre>
+<p>&#x8FD9;&#x91CC; ++left &#x90A3;&#x4E00;&#x884C;while&#x8BED;&#x53E5;&#x5220;&#x9664;&#x4E86; left &lt; right &#x7684;&#x5224;&#x65AD;&#xFF0C;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;&#x628A;&#x67A2;&#x7EBD;&#x653E;&#x5728;&#x4E86;&#x6700;&#x540E;&#xFF0C;&#x6240;&#x4EE5;left&#x80AF;&#x5B9A;&#x4E0D;&#x4F1A;&#x8D8A;&#x754C;&#x3002;&#x800C;&#x6570;&#x7EC4;&#x5DE6;&#x8FB9;&#x7684;&#x5143;&#x7D20;&#x53EF;&#x80FD;&#x90FD;&#x6EE1;&#x8DB3; array[right] &gt; pivot&#xFF0C;&#x53EF;&#x80FD;&#x8D8A;&#x754C;&#xFF0C;&#x56E0;&#x6B64; --right &#x7684;&#x64CD;&#x4F5C;&#x5FC5;&#x987B;&#x6709; left &lt; right &#x7684;&#x5224;&#x65AD;&#x3002;&#x975E;&#x5E38;&#x5FAE;&#x5999;&#x7684;&#x662F;&#xFF0C;&#x8FD9;&#x91CC;++left&#x4E0D;&#x80FD;&#x6709; left &lt; right &#x7684;&#x5224;&#x65AD;&#xFF0C;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x8BA9;left&#x6307;&#x9488;&#x8D8A;&#x8FC7;&#x4E24;&#x4E2A;&#x5B50;&#x6570;&#x7EC4;&#x7684;&#x8FB9;&#x754C;&#x3002;&#x6BD4;&#x5982;&#xFF0C;&#x73B0;&#x5728;&#x7684;&#x6570;&#x7EC4;&#x662F;[2, 5, 1]&#xFF0C;&#x67A2;&#x7EBD;&#x662F;5&#x3002;&#x6211;&#x4EEC;&#x628A;&#x67A2;&#x7EBD;&#x653E;&#x5728;&#x6700;&#x540E;&#xFF0C;&#x5F97;&#x5230;&#x4E86;[2, 1, 5]&#xFF0C;&#x6211;&#x4EEC;&#x5E0C;&#x671B;left&#x80FD;&#x591F;&#x6307;&#x5411;5&#xFF0C;&#x5373;&#x4E00;&#x4E2A;&#x5927;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#x7684;&#x6570;&#xFF0C;&#x8FD9;&#x6837;&#x6211;&#x4EEC; swap(array, left, right); &#x624D;&#x80FD;&#x5F97;&#x5230;&#x6B63;&#x786E;&#x7684;&#x7ED3;&#x679C;&#xFF0C;&#x5982;&#x679C;&#x52A0;&#x4E0A;&#x4E86;left &lt; right &#x7684;&#x5224;&#x65AD;&#xFF0C;&#x5219;left&#x65E0;&#x6CD5;&#x8D8A;&#x8FC7;&#x5B50;&#x6570;&#x7EC4;[2, 1]&#x548C;[5]&#x7684;&#x4E2D;&#x95F4;&#x8FB9;&#x754C;&#xFF0C;left&#x6307;&#x5411;1&#xFF0C;&#x6700;&#x540E;&#x5F97;&#x5230;&#x7684;&#x7ED3;&#x679C;&#x8FD8;&#x662F;[2, 5, 1]&#x3002;&#x5F53;&#x7136;&#xFF0C;++left&#x7684;while&#x8BED;&#x53E5;&#x53EF;&#x4EE5;&#x52A0;&#x4E0A;left &lt;= right &#x7684;&#x5224;&#x65AD;&#xFF0C;&#x4E0D;&#x8FC7;&#x8FD9;&#x662F;&#x591A;&#x4F59;&#x7684;&#x3002;&#x53E6;&#x5916;&#xFF0C;&#x53EF;&#x4EE5;&#x5728;&#x4E24;&#x4E2A;while&#x8BED;&#x53E5;&#x90FD;&#x52A0;&#x4E0A;left &lt;= right &#x7684;&#x5224;&#x65AD;&#xFF0C;&#x4E0D;&#x8FC7;&#x8FD9;&#x540C;&#x6837;&#x662F;&#x4E0D;&#x5FC5;&#x8981;&#x7684;&#x3002;</p>
+<p>&#x6211;&#x4EEC;&#x8FD8;&#x5728;for&#x5FAA;&#x73AF;&#x5220;&#x9664;&#x4E86; left &lt; right &#x7684;&#x5224;&#x65AD;&#xFF0C;&#x5426;&#x5219;&#x5F53;&#x5F85;&#x5904;&#x7406;&#x6570;&#x7EC4;&#x53EA;&#x6709;&#x4E24;&#x4E2A;&#x5143;&#x7D20;&#x65F6;&#xFF0C;&#x4E14;left&#x9700;&#x8981;&#x6307;&#x5411;&#x5C3E;&#x5143;&#x7D20;&#x65F6;&#xFF0C;left&#x5C06;&#x53EA;&#x80FD;&#x6307;&#x5411;&#x9996;&#x5143;&#x7D20;&#x3002;&#x6BD4;&#x5982;&#xFF0C;&#x6709;&#x4E00;&#x4E2A;&#x6570;&#x7EC4;[2, 1]&#xFF0C;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x540E;&#x5F97;&#x5230;[1, 2]&#xFF0C;&#x5219; end == 1&#xFF0C;right == 0&#xFF0C;left == 0&#x3002;&#x663E;&#x7136;left&#x5E94;&#x8BE5;&#x6307;&#x5411;2&#xFF0C;&#x4F46;&#x662F;&#x7531;&#x4E8E;&#x4E0D;&#x6EE1;&#x8DB3; left &lt; right &#xFF0C;left&#x4E0D;&#x4F1A;&#x81EA;&#x589E;&#xFF0C;left&#x4F9D;&#x7136;&#x6307;&#x5411;1&#xFF0C;&#x6240;&#x4EE5;&#x5F97;&#x5230;&#x7684;&#x7ED3;&#x679C;&#x4ECD;&#x7136;&#x662F;[2, 1]</p>
+<p>&#x7531;&#x4E8E;&#x67A2;&#x7EBD;&#x5DF2;&#x7ECF;&#x653E;&#x5728;&#x4E86;&#x6B63;&#x786E;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x6211;&#x4EEC;&#x53EA;&#x9700;&#x5BF9;&#x95ED;&#x533A;&#x95F4;[start, left - 1]&#x548C;[left + 1, end]&#x9012;&#x5F52;&#x5373;&#x53EF;&#x3002;&#x7531;&#x4E8E;left&#x6CA1;&#x6709;&#x8D8A;&#x754C;&#xFF0C;&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x4FDD;&#x8BC1;&#x8FD9;&#x4E24;&#x4E2A;&#x95ED;&#x533A;&#x95F4;&#x603B;&#x662F;&#x6BD4;&#x539F;&#x533A;&#x95F4;&#x5C0F;&#xFF0C;&#x56E0;&#x6B64;&#x9012;&#x5F52;&#x603B;&#x662F;&#x53EF;&#x4EE5;&#x6B63;&#x786E;&#x505C;&#x6B62;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x5199;&#x6210;quickSort(array, start, left - 1); quickSort(array, left, end); &#x662F;&#x9519;&#x7684;&#xFF0C;left&#x53EF;&#x80FD;&#x7B49;&#x4E8E;start&#xFF0C;&#x6B64;&#x65F6;&#x8303;&#x56F4;&#x6CA1;&#x6709;&#x51CF;&#x5C0F;&#xFF0C;&#x51FA;&#x73B0;&#x65E0;&#x9650;&#x9012;&#x5F52;&#x3002;</p>
+<p>&#x5982;&#x679C;&#x5199;&#x6210; quickSort(array, start, left); &#x548C; quickSort(array, left, end); &#xFF0C;&#x60C5;&#x51B5;&#x540C;&#x4E0A;</p>
+<p>&#x5982;&#x679C;&#x5199;&#x6210;quickSort(array, start, left); quickSort(array, left + 1, end); &#xFF0C;&#x4E14;pivotPos != end&#xFF0C;&#x5219;left&#x4F1A;&#x5728;pivotPos&#x5904;&#x505C;&#x4E00;&#x4E0B;&#xFF0C;&#x5E76;&#x4E0E;right&#x6307;&#x9488;&#x4EA4;&#x6362;&#x5143;&#x7D20;&#xFF0C;&#x8FD9;&#x65F6;right&#x6307;&#x9488;&#x6709;&#x673A;&#x4F1A;&#x50CF;&#x5DE6;&#x79FB;&#x52A8;&#x81F3;&#x5C11;&#x4E00;&#x683C;&#xFF0C;&#x56E0;&#x6B64;left&#x6307;&#x9488;&#x4E0D;&#x4F1A;&#x5230;&#x8FBE;end&#xFF0C;&#x5728;&#x9012;&#x5F52;&#x8303;&#x56F4;&#x53EF;&#x4EE5;&#x7F29;&#x5C0F;&#xFF0C;&#x53EF;&#x4EE5;&#x6B63;&#x786E;&#x8FD0;&#x884C;&#x3002;&#x5982;&#x679C;pivotPos == end&#xFF0C;&#x4E14;pivot&#x662F;&#x6700;&#x5927;&#x503C;&#xFF0C;&#x90A3;&#x4E48;&#x4F1A;&#x6709; left == end&#xFF0C;&#x51FA;&#x73B0;&#x65E0;&#x9650;&#x9012;&#x5F52;</p>
+<p>&#x7EFC;&#x4E0A;&#xFF0C;&#x6211;&#x4EEC;&#x5F97;&#x5230;&#x4E86;&#x8FD9;&#x6837;&#x7684;&#x4EE3;&#x7801;</p>
+<h5 id="code-doublepointer-swap-1">Code-DoublePointer-Swap-1</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span></span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>; <span class="hljs-comment">//start,end&#x4E5F;&#x53EF;</span>
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        <span class="hljs-keyword">int</span> left = start;
+        swap(array, pivotPos, end);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> right = end - <span class="hljs-number">1</span>; ; ++left, --right){
+            <span class="hljs-keyword">while</span> (array[left] &lt; pivot) ++left;
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; array[right] &gt; pivot) --right;
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        swap(array, left, end);
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<p>&#x5982;&#x679C;&#x8981;&#x4F7F;&#x7528;&#x65B9;&#x6848;2&#xFF0C;&#x9700;&#x8981;&#x6CE8;&#x610F;left&#x6307;&#x9488;&#x9047;&#x5230;&#x653E;&#x5728;&#x6700;&#x53F3;&#x8FB9;&#x7684;&#x67A2;&#x7EBD;&#x4E0D;&#x4F1A;&#x4E3B;&#x52A8;&#x505C;&#x4E0B;&#x6765;&#xFF0C;&#x53EF;&#x80FD;&#x8D8A;&#x754C;&#xFF0C;&#x56E0;&#x6B64;&#x5FC5;&#x987B;&#x5728;while&#x8BED;&#x53E5;&#x52A0;&#x4E0A;left &lt;= right&#x7684;&#x5224;&#x65AD;&#x3002;right&#x6307;&#x9488;&#x7684;while&#x7684;&#x5224;&#x65AD;&#x4E5F;&#x53EF;&#x4EE5;&#x6539;&#x6210;left &lt;= right&#xFF0C;&#x53EF;&#x80FD;&#x6709;&#x4EBA;&#x89C9;&#x5F97;&#x8FD9;&#x6837;&#x4EE3;&#x7801;&#x66F4;&#x7F8E;&#x89C2;&#x3002;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
+<h5 id="code-doublepointer-swap-2">Code-DoublePointer-Swap-2</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span></span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>; <span class="hljs-comment">//start,end&#x4E5F;&#x53EF;</span>
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        <span class="hljs-keyword">int</span> left = start;
+        swap(array, pivotPos, end);
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> right = end - <span class="hljs-number">1</span>; ; ++left, --right){
+            <span class="hljs-keyword">while</span> (left &lt;= right &amp;&amp; array[left] &lt;= pivot) ++left;
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; array[right] &gt;= pivot) --right;
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        swap(array, left, end);
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h2 id="&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#xFF0C;&#x4E2D;&#x4F4D;&#x6570;">&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;(&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#xFF0C;&#x4E2D;&#x4F4D;&#x6570;)</h2>
+<p>&#x524D;&#x9762;&#x7684;&#x4EE3;&#x7801;&#x56FA;&#x5B9A;&#x91C7;&#x7528;&#x4E2D;&#x95F4;&#x7684;&#x5143;&#x7D20;&#x4F5C;&#x4E3A;&#x67A2;&#x7EBD;&#xFF0C;&#x8FD9;&#x5728;LeetCode&#x4E0A;&#x5DF2;&#x7ECF;&#x6709;&#x5F88;&#x597D;&#x7684;&#x6548;&#x7387;&#xFF0C;&#x6267;&#x884C;&#x7528;&#x65F6;&#x90FD;&#x5728;10ms&#x4EE5;&#x4E0B;&#xFF0C;&#x800C;&#x91C7;&#x7528;&#x9996;&#x5143;&#x7D20;&#x6216;&#x5C3E;&#x5143;&#x7D20;&#x4F5C;&#x4E3A;&#x67A2;&#x7EBD;&#x65F6;&#x6267;&#x884C;&#x7528;&#x65F6;&#x90FD;&#x5728;1000ms&#x5DE6;&#x53F3;&#x3002;&#x4F46;&#x662F;&#xFF0C;&#x9ED1;&#x76AE;&#x4E66;<sup><a href="#fn_1" id="reffn_1">1</a></sup>&#x5E76;&#x4E0D;&#x5EFA;&#x8BAE;&#x8FD9;&#x6837;&#x505A;&#xFF0C;&#x4F5C;&#x8005;&#x8BF4;&#x9009;&#x4E2D;&#x95F4;&#x7684;&#x5143;&#x7D20;&#x8DDF;&#x9009;&#x9996;&#x5143;&#x7D20;&#x6216;&#x5C3E;&#x5143;&#x7D20;&#x672C;&#x8D28;&#x4E0A;&#x6CA1;&#x6709;&#x533A;&#x522B;&#x3002;&#x76EE;&#x524D;&#x8FD8;&#x4E0D;&#x6E05;&#x695A;&#x4E3A;&#x4EC0;&#x4E48;&#x5728;LeetCode&#x4E0A;&#x91C7;&#x7528;&#x4E2D;&#x95F4;&#x7684;&#x5143;&#x7D20;&#x4F5C;&#x4E3A;&#x67A2;&#x7EBD;&#x4F1A;&#x5FEB;&#x90A3;&#x4E48;&#x591A;&#xFF0C;&#x4E0D;&#x77E5;&#x9053;&#x662F;&#x4E0D;&#x662F;&#x6D4B;&#x8BD5;&#x7528;&#x4F8B;&#x7684;&#x95EE;&#x9898;&#x3002;&#x9ED1;&#x76AE;&#x4E66;<sup><a href="#fn_1" id="reffn_1">1</a></sup>&#x5EFA;&#x8BAE;&#x91C7;&#x7528;&#x9996;&#x5143;&#x7D20;&#x3001;&#x4E2D;&#x95F4;&#x5143;&#x7D20;&#x548C;&#x5C3E;&#x5143;&#x7D20;&#x7684;&#x4E2D;&#x4F4D;&#x6570;&#x4F5C;&#x4E3A;&#x67A2;&#x7EBD;&#x3002;&#x4E3A;&#x4E86;&#x627E;&#x5230;&#x4E2D;&#x4F4D;&#x6570;&#xFF0C;&#x6211;&#x4EEC;&#x8FDB;&#x884C;&#x4E86;&#x4E09;&#x6B21;&#x6BD4;&#x8F83;&#x4EA4;&#x6362;&#xFF0C;&#x8FD9;&#x6837;&#x987A;&#x4FBF;&#x628A;&#x4E2D;&#x4F4D;&#x6570;&#x653E;&#x5728;&#x4E86;&#x4E2D;&#x95F4;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x5982;&#x4E0B;&#x6240;&#x793A;</p>
+<pre><code class="lang-java"><span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> midPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+<span class="hljs-keyword">if</span>(array[start] &gt; array[midPos]) swap(array, start, midPos);
+<span class="hljs-keyword">if</span>(array[start] &gt; array[end]) swap(array, start, end);
+<span class="hljs-keyword">if</span>(array[midPos] &gt; array[end]) swap(array, midPos, end);
+</code></pre>
+<p>&#x4F46;&#x662F;&#x8FD9;&#x91CC;&#x4E0D;&#x5EFA;&#x8BAE;&#x76F4;&#x63A5;&#x628A;&#x8FD9;&#x6BB5;&#x4EE3;&#x7801;&#x52A0;&#x5230;Code-DoublePointer-Swap-1&#x4E2D;&#xFF0C;&#x56E0;&#x4E3A;&#x5C3E;&#x5143;&#x7D20;&#x5DF2;&#x7ECF;&#x5927;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#xFF0C;&#x800C;&#x6267;&#x884C;swap(array, pivotPos, end); &#x4F1A;&#x9020;&#x6210;&#x4E0D;&#x5FC5;&#x8981;&#x7684;&#x4EA4;&#x6362;&#x3002;&#x56E0;&#x6B64;&#x5E94;&#x8BE5;&#x8DF3;&#x8FC7;&#x5C3E;&#x5143;&#x7D20;&#xFF0C;&#x6267;&#x884C;swap(array, pivotPos, end - 1);&#x3002;&#x7C7B;&#x4F3C;&#x7684;&#xFF0C;start&#x6307;&#x9488;&#x6307;&#x5411;&#x7684;&#x5143;&#x7D20;&#x4E5F;&#x5E94;&#x8BE5;&#x8DF3;&#x8FC7;&#xFF0C;&#x56E0;&#x4E3A;&#x8FD9;&#x6837;&#x5143;&#x7D20;&#x80AF;&#x5B9A;&#x5C0F;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#xFF0C;&#x65E0;&#x9700;&#x79FB;&#x52A8;&#x3002;&#x6211;&#x4EEC;&#x5728;&#x524D;&#x9762;&#x5DF2;&#x7ECF;&#x6307;&#x51FA;Code-DoublePointer-Swap-1&#x7684;for&#x5FAA;&#x73AF;&#x6761;&#x4EF6;&#x4E0D;&#x80FD;&#x6709;left &lt; right&#x7684;&#x5224;&#x65AD;&#xFF0C;&#x4F46;&#x662F;&#x5982;&#x679C;&#x5F85;&#x5904;&#x7406;&#x6570;&#x7EC4;&#x53EA;&#x6709;2&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x6BD4;&#x5982;[0, 0]&#xFF0C;&#x90A3;&#x4E48;end == 1&#xFF0C;pivotPos == 0, right = -1&#xFF0C;&#x5C06;&#x53D1;&#x751F;&#x6570;&#x7EC4;&#x8D8A;&#x754C;&#x5F02;&#x5E38;&#x3002;&#x4E8B;&#x5B9E;&#x4E0A;&#xFF0C;&#x5982;&#x679C;&#x5F85;&#x5904;&#x7406;&#x6570;&#x7EC4;&#x53EA;&#x6709;&#x4E0D;&#x591A;&#x4E8E;3&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x5B8C;&#x5168;&#x53EF;&#x4EE5;&#x5728;&#x4E09;&#x6B21;&#x6BD4;&#x8F83;&#x4EA4;&#x6362;&#x540E;&#x8FD4;&#x56DE;&#xFF0C;&#x8FD9;&#x6837;&#x5C31;&#x907F;&#x514D;&#x4E86;&#x6570;&#x7EC4;&#x8D8A;&#x754C;&#x7684;&#x95EE;&#x9898;&#x3002;&#x6B64;&#x5916;&#xFF0C;&#x7531;&#x4E8E;&#x73B0;&#x5728;&#x9996;&#x5143;&#x7D20;&#x5C0F;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#xFF0C;&#x56E0;&#x6B64; --right&#x7684;while&#x8BED;&#x53E5;&#x4E0D;&#x9700;&#x8981;left &lt; right&#x7684;&#x5224;&#x65AD;&#x4E86;&#xFF0C;&#x8FD9;&#x53EF;&#x4EE5;&#x63D0;&#x9AD8;&#x8FD0;&#x884C;&#x6548;&#x7387;&#x3002;&#x73B0;&#x5728;&#x5F97;&#x5230;&#x7684;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
+<h5 id="code-doublepointer-swap-mid-1">Code-DoublePointer-Swap-Mid-1</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span></span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> midPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[midPos]) swap(array, start, midPos);
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[end]) swap(array, start, end);
+        <span class="hljs-keyword">if</span>(array[midPos] &gt; array[end]) swap(array, midPos, end);
+        <span class="hljs-keyword">int</span> left = start + <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = end - <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(left &gt;= pivotPos) <span class="hljs-keyword">return</span>;
+        swap(array, pivotPos, midPos);
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> right = pivotPos - <span class="hljs-number">1</span>; ; ++left, --right){
+            <span class="hljs-keyword">while</span> (array[left] &lt; pivot) ++left;
+            <span class="hljs-keyword">while</span> (array[right] &gt; pivot) --right;
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        swap(array, left, pivotPos);
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<p>&#x9ED1;&#x76AE;&#x4E66;<sup><a href="#fn_1" id="reffn_1">1</a></sup>&#x63D0;&#x4F9B;&#x7684;&#x4EE3;&#x7801;&#x6709;&#x6240;&#x4E0D;&#x540C;&#xFF0C;&#x5982;&#x4E0B;</p>
+<h5 id="code-doublepointer-swap-mid-2">Code-DoublePointer-Swap-Mid-2</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> midPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[midPos]) swap(array, start, midPos);
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[end]) swap(array, start, end);
+        <span class="hljs-keyword">if</span>(array[midPos] &gt; array[end]) swap(array, midPos, end);
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = end - <span class="hljs-number">1</span>;
+        swap(array, midPos, pivotPos);
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> right = pivotPos; left &lt; right;){
+            <span class="hljs-keyword">while</span> (array[++left] &lt; pivot){}
+            <span class="hljs-keyword">while</span> (array[--right] &gt; pivot){}
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        swap(array, left, pivotPos);
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<p>&#x7531;&#x4E8E;while&#x8BED;&#x53E5;&#x4E2D;&#x7684;&#x6570;&#x7EC4;&#x8BBF;&#x95EE;&#x603B;&#x662F;&#x5148;&#x81EA;&#x589E;/&#x81EA;&#x51CF;&#x4E0B;&#x6807;&#x518D;&#x4F7F;&#x7528;&#xFF0C;&#x56E0;&#x6B64;&#x4EA4;&#x6362;&#x5143;&#x7D20;&#x540E;&#x4E0D;&#x9700;&#x8981;&#x4E13;&#x95E8;&#x8C03;&#x6574;&#x4E0B;&#x6807;&#x3002;&#x6B64;&#x5916;&#xFF0C;&#x6211;&#x4EEC;&#x4E5F;&#x4E0D;&#x9700;&#x8981;&#x8BA9;left = start + 1&#xFF0C;right = pivotPos - 1&#xFF0C;&#x56E0;&#x4E3A;&#x5148;&#x81EA;&#x589E;/&#x81EA;&#x51CF;&#x4E0B;&#x6807;&#x5B9E;&#x9645;&#x4E0A;&#x4EA4;&#x6362;&#x65F6;&#x4F7F;&#x7528;&#x7684;&#x4E0B;&#x6807;&#x662F;&#x5F00;&#x533A;&#x95F4;(left, right)&#xFF0C;&#x800C;while&#x53EF;&#x80FD;&#x8BBF;&#x95EE;&#x7684;&#x4E0B;&#x6807;&#x662F;&#x95ED;&#x533A;&#x95F4;[left, right] &#x6216; [left - 1, right + 1] (&#x6BD4;&#x5982;&#x6570;&#x7EC4;&#x6709;2&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x90A3;&#x4E48;end == 1&#xFF0C;pivotPos == 0&#xFF0C;++left == 1&#xFF0C;--right == -1)&#xFF0C;&#x5FC5;&#x987B;&#x4FDD;&#x8BC1;&#x8FD9;&#x4E2A;&#x95ED;&#x533A;&#x95F4;&#x5408;&#x6CD5;&#xFF0C;&#x6240;&#x4EE5;for&#x5FAA;&#x73AF;&#x52A0;&#x4E0A;&#x4E86;left &lt; right&#x7684;&#x5224;&#x65AD;&#x3002;&#x5947;&#x602A;&#x7684;&#x662F;&#xFF0C;&#x6211;&#x4EEC;&#x4E4B;&#x524D;&#x5DF2;&#x7ECF;&#x77E5;&#x9053;Code-DoublePointer-Swap-1&#x4E2D;&#x7684;for&#x5FAA;&#x73AF;&#x4E0D;&#x80FD;&#x52A0;&#x4E0A;&#x8FD9;&#x4E2A;&#x5224;&#x65AD;&#xFF0C;&#x4E3A;&#x4EC0;&#x4E48;Code-DoublePointer-Swap-Mid-2&#x7684;for&#x5FAA;&#x73AF;&#x5C31;&#x5FC5;&#x987B;&#x52A0;&#x4E0A;&#x8FD9;&#x4E2A;&#x5224;&#x65AD;&#x5462;&#xFF1F;&#x539F;&#x56E0;&#x662F;&#xFF0C;Code-DoublePointer-Swap-1&#x7684;&#x6570;&#x7EC4;&#x8BBF;&#x95EE;&#x8303;&#x56F4;&#x662F;&#x95ED;&#x533A;&#x95F4;[start, end - 1]&#xFF0C;&#x51FD;&#x6570;&#x7684;&#x7B2C;&#x4E00;&#x884C;&#x4EE3;&#x7801;&#x786E;&#x4FDD;&#x4E86;&#x5904;&#x7406;&#x8303;&#x56F4;&#x81F3;&#x5C11;&#x6709;2&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x56E0;&#x6B64;&#x95ED;&#x533A;&#x95F4;[start, end - 1]&#x4E5F;&#x80AF;&#x5B9A;&#x6709;&#x5143;&#x7D20;&#xFF0C;&#x4E14;&#x8FD9;&#x4E2A;&#x533A;&#x95F4;&#x540E;&#x8FD8;&#x6709;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x3002;&#x800C;Code-DoublePointer-Swap-Mid-2&#x4F7F;&#x7528;&#x7684;&#x662F;(start, end - 1)&#x5F00;&#x533A;&#x95F4;&#xFF0C;&#x5982;&#x679C;&#x5904;&#x7406;&#x8303;&#x56F4;&#x53EA;&#x6709;2&#x4E2A;&#x5143;&#x7D20;&#xFF0C;&#x90A3;&#x4E48;end == 1&#xFF0C;right&#x7684;&#x521D;&#x59CB;&#x503C;&#x4E3A;0&#xFF0C;&#x5E76;&#x4E14;&#x4F1A;&#x7ACB;&#x5373;&#x81EA;&#x51CF;&#xFF0C;&#x5E76;&#x53D1;&#x751F;&#x6570;&#x7EC4;&#x4E0B;&#x6807;&#x8D8A;&#x754C;&#x5F02;&#x5E38;&#x3002;&#x81F3;&#x4E8E;Code-DoublePointer-Swap-1&#x4E2D;left&#x6307;&#x9488;&#x7684;&#x95EE;&#x9898;&#x5728;&#x8FD9;&#x91CC;&#x4E0D;&#x5B58;&#x5728;&#xFF0C;&#x56E0;&#x4E3A;&#x524D;&#x9762;3&#x4E2A;&#x6BD4;&#x8F83;&#x4EA4;&#x6362;&#x5DF2;&#x7ECF;&#x628A;&#x8FD9;&#x4E24;&#x4E2A;&#x5143;&#x7D20;&#x6B63;&#x786E;&#x6392;&#x5E8F;&#x4E86;&#xFF0C;&#x4E14;&#x6709;midPos == pivotPos == left&#xFF0C;&#x56E0;&#x6B64;&#x8FD9;&#x91CC;&#x5B9E;&#x9645;&#x4E0A;&#x4E0D;&#x4F1A;&#x79FB;&#x52A8;&#x4EFB;&#x4F55;&#x5143;&#x7D20;&#x3002;&#x5982;&#x679C;&#x4E0D;&#x60F3;&#x5728;for&#x5FAA;&#x73AF;&#x52A0;&#x4E0A;&#x8FD9;&#x4E2A;&#x5224;&#x65AD;&#xFF0C;&#x53EF;&#x4EE5;&#x50CF;Code-DoublePointer-Swap-Mid-1&#x90A3;&#x6837;&#x505A;</p>
+<h5 id="code-doublepointer-swap-mid-3">Code-DoublePointer-Swap-Mid-3</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> midPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[midPos]) swap(array, start, midPos);
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[end]) swap(array, start, end);
+        <span class="hljs-keyword">if</span>(array[midPos] &gt; array[end]) swap(array, midPos, end);
+        <span class="hljs-keyword">if</span>(start + <span class="hljs-number">2</span> &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = end - <span class="hljs-number">1</span>;
+        swap(array, midPos, pivotPos);
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> right = pivotPos; ;){
+            <span class="hljs-keyword">while</span> (array[++left] &lt; pivot){}
+            <span class="hljs-keyword">while</span> (array[--right] &gt; pivot){}
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        swap(array, left, pivotPos);
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<p>&#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F;&#xFF0C;&#x9ED1;&#x76AE;&#x4E66;&#x7684;&#x4EE3;&#x7801;(Code-DoublePointer-Swap-Mid-2&#x3001;Code-DoublePointer-Swap-Mid-3)&#x7684;&#x5F00;&#x533A;&#x95F4;&#xFF0C;while&#x8BED;&#x53E5;&#x91CC;&#x7684;&#x81EA;&#x589E;/&#x51CF;&#x518D;&#x4F7F;&#x7528;&#x4EE5;&#x53CA;3&#x6B21;&#x6BD4;&#x8F83;&#x4EA4;&#x6362;&#x662F;&#x914D;&#x5957;&#x4F7F;&#x7528;&#x7684;&#xFF0C;&#x4E0D;&#x53EF;&#x4EE5;&#x4FEE;&#x6539;&#x4E00;&#x90E8;&#x5206;&#x800C;&#x4E0D;&#x540C;&#x65F6;&#x4FEE;&#x6539;&#x914D;&#x5957;&#x7684;&#x5176;&#x4ED6;&#x90E8;&#x5206;&#x3002;&#x4E0D;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x5220;&#x9664;3&#x4E2A;&#x6BD4;&#x8F83;&#x4EA4;&#x6362;&#xFF0C;&#x7136;&#x540E;&#x628A;&#x53CC;&#x6307;&#x9488;&#x533A;&#x95F4;&#x6539;&#x6210;&#x5F00;&#x533A;&#x95F4;(start - 1, end)&#xFF0C;&#x539F;&#x56E0;&#x662F;&#x73B0;&#x5728;&#x9996;&#x5143;&#x7D20;&#x53EF;&#x80FD;&#x4F9D;&#x7136;&#x5927;&#x4E8E;&#x67A2;&#x7EBD;&#xFF0C;&#x751A;&#x81F3;&#x67A2;&#x7EBD;&#x5C31;&#x662F;&#x6700;&#x5C0F;&#x7684;&#x5143;&#x7D20;&#xFF0C;&#x56E0;&#x6B64;right&#x6307;&#x9488;&#x53EF;&#x80FD;&#x8D8A;&#x754C;&#xFF0C;&#x51FA;&#x73B0;&#x6570;&#x7EC4;&#x4E0B;&#x6807;&#x8D8A;&#x754C;&#x5F02;&#x5E38;&#x3002;&#x4E0D;&#x8FC7;&#x8FD9;&#x91CC;for&#x5FAA;&#x73AF;&#x4E0D;&#x9700;&#x8981;left &lt; right&#x7684;&#x5224;&#x65AD;&#xFF0C;&#x56E0;&#x4E3A;right&#x6307;&#x9488;&#x521D;&#x59CB;&#x6307;&#x5411;&#x7684;&#x5143;&#x7D20;&#x5DE6;&#x8FB9;&#x80AF;&#x5B9A;&#x6709;&#x5143;&#x7D20;</p>
+<h5 id="code-doublepointer-swap-error-1">Code-DoublePointer-Swap-ERROR-1</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        swap(array, end, pivotPos);
+        <span class="hljs-keyword">int</span> left = start - <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> right = end; ;){
+            <span class="hljs-keyword">while</span> (array[++left] &lt; pivot){}
+            <span class="hljs-keyword">while</span> (array[--right] &gt; pivot){}
+            <span class="hljs-comment">//&#x5E94;&#x8BE5;&#x6539;&#x6210; while (left &lt; right &amp;&amp; array[--right] &gt; pivot){}</span>
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        swap(array, left, end);
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h2 id="&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;&#x4E0D;&#x76F4;&#x63A5;&#x4EA4;&#x6362;">&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;(&#x4E0D;&#x76F4;&#x63A5;&#x4EA4;&#x6362;)</h2>
+<p>&#x5B66;&#x6821;&#x7684;&#x6559;&#x6750;<sup><a href="#fn_2" id="reffn_2">2</a></sup>&#x7ED9;&#x51FA;&#x4E86;&#x4E00;&#x79CD;&#x4E0D;&#x7528;&#x76F4;&#x63A5;&#x8C03;&#x7528;swap&#x51FD;&#x6570;&#x7684;&#x4EE3;&#x7801;&#xFF0C;&#x4F46;&#x662F;&#x9700;&#x8981;&#x989D;&#x5916;&#x7684;&#x53D8;&#x91CF;&#x8BB0;&#x5F55;&#x67A2;&#x7EBD;&#x503C;&#x3002;&#x8BE5;&#x4EE3;&#x7801;&#x5728;LeetCode&#x7684;&#x8FD0;&#x884C;&#x6548;&#x7387;&#x4E0E;&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#x7684;&#x4EE3;&#x7801;&#x5DEE;&#x4E0D;&#x591A;&#x3002;&#x4EE3;&#x7801;&#x5982;&#x4E0B;&#xFF0C;&#x6709;&#x6539;&#x52A8;</p>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span></span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">partition</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        array[pivotPos] = array[start];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> right = end; left &lt; right; ){
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; array[right] &gt;= pivot) --right;
+            array[left] = array[right];
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; array[left] &lt;= pivot) ++left;
+            array[right] = array[left];
+        }
+        array[left] = pivot;
+        <span class="hljs-keyword">return</span> left;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = partition(array, start, end);
+        quickSort(array, start, pivotPos - <span class="hljs-number">1</span>);
+        quickSort(array, pivotPos + <span class="hljs-number">1</span>, end);
+    }
+}
+</code></pre>
+<h2 id="&#x5FEB;&#x6162;&#x6307;&#x9488;&#x5212;&#x5206;">&#x5FEB;&#x6162;&#x6307;&#x9488;&#x5212;&#x5206;</h2>
+<p>&#x6211;&#x5728;&#x67D0;&#x57F9;&#x8BAD;&#x673A;&#x6784;&#x9001;&#x7ED9;&#x522B;&#x4EBA;&#x7684;&#x9F20;&#x6807;&#x57AB;&#x53D1;&#x73B0;&#x4E86;&#x65B0;&#x7684;&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x7B97;&#x6CD5;&#xFF0C;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
+<h5 id="code-fastslowpointer-1">Code-FastSlowPointer-1</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        <span class="hljs-keyword">if</span>(nums == <span class="hljs-keyword">null</span> || nums.length == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> nums;
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">int</span> array[], <span class="hljs-keyword">int</span> low, <span class="hljs-keyword">int</span> high)</span></span>{
+        <span class="hljs-keyword">int</span> pivot, p_pos, i, t;
+        <span class="hljs-keyword">if</span>(low &lt; high){
+            p_pos = low;
+            pivot = array[p_pos];
+            <span class="hljs-keyword">for</span>(i = low + <span class="hljs-number">1</span>; i &lt;= high; i++){
+                <span class="hljs-keyword">if</span>(array[i] &lt; pivot){
+                    p_pos++;
+                    t = array[p_pos];
+                    array[p_pos] = array[i];
+                    array[i] = t;
+                }
+            }
+            t = array[low];
+            array[low] = array[p_pos];
+            array[p_pos] = t;
+
+            quickSort(array, low, p_pos - <span class="hljs-number">1</span>);
+            quickSort(array, p_pos + <span class="hljs-number">1</span>, high);
+        }
+    }
+}
+</code></pre>
+<p>&#x7ECF;&#x8FC7;&#x5206;&#x6790;&#xFF0C;&#x8BE5;&#x4EE3;&#x7801;&#x4F7F;&#x7528;&#x4E86;&#x5FEB;&#x6162;&#x6307;&#x9488;&#x3002;&#x9F20;&#x6807;&#x57AB;&#x4E0A;&#x7B2C;&#x4E8C;&#x4E2A;if&#x91CC;&#x9762;&#x5199;&#x7684;&#x662F;array[i] &gt; pivot&#xFF0C;&#x662F;&#x4ECE;&#x5927;&#x5230;&#x5C0F;&#x6392;&#x5E8F;&#xFF0C;&#x4E3A;&#x4E86;&#x65B9;&#x4FBF;&#x5728; LeetCode &#x6D4B;&#x8BD5;&#xFF0C;&#x6211;&#x6539;&#x6210;&#x4E86;array[i] &lt; pivot&#x3002;&#x4E0D;&#x8FC7;&#x8FD9;&#x6BB5;&#x4EE3;&#x7801;&#x5B58;&#x5728;&#x5F88;&#x591A;&#x5F71;&#x54CD;&#x53EF;&#x8BFB;&#x6027;&#x7684;&#x4E0D;&#x89C4;&#x8303;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x6BD4;&#x5982;&#x51FD;&#x6570;&#x53C2;&#x6570;array&#x4F7F;&#x7528;&#x4E86;C&#x8BED;&#x8A00;&#x98CE;&#x683C;&#x7684;&#x6570;&#x7EC4;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x5F62;&#x5F0F;&#xFF0C;&#x53D8;&#x91CF;i&#x53EF;&#x89C1;&#x8303;&#x56F4;&#x592A;&#x5927;&#xFF0C;&#x53D8;&#x91CF;&#x547D;&#x540D;&#x4E0D;&#x89C4;&#x8303;&#xFF0C;if&#x7684;&#x5927;&#x62EC;&#x53F7;&#x4E2D;&#x4EE3;&#x7801;&#x8FC7;&#x591A;&#x5BFC;&#x81F4;&#x7F29;&#x8FDB;&#x8F83;&#x591A;&#xFF0C;&#x4EA4;&#x6362;&#x53D8;&#x91CF;&#x7684;&#x4EE3;&#x7801;&#x5197;&#x4F59;&#x3002;&#x56E0;&#x6B64;&#x6211;&#x628A;&#x4EE3;&#x7801;&#x6539;&#x6210;&#x4E86;&#x8FD9;&#x6837;</p>
+<h5 id="code-fastslowpointer-2">Code-FastSlowPointer-2</h5>
+<pre><code class="lang-java">
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        <span class="hljs-keyword">if</span>(nums == <span class="hljs-keyword">null</span> || nums.length == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> nums;
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">int</span> slow = start;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = nums[start];
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> fast = start + <span class="hljs-number">1</span>; fast &lt;= end; ++fast){
+            <span class="hljs-keyword">if</span>(nums[fast] &lt; pivot){
+                swap(nums, fast, ++slow);
+            }
+        }
+        swap(nums, start, slow);
+        quickSort(nums, start, slow - <span class="hljs-number">1</span>);
+        quickSort(nums, slow + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<p>Code-FastSlowPointer-2&#x7684;&#x7B97;&#x6CD5;&#x672C;&#x8D28;&#x4E0A;&#x4E0E;Code-FastSlowPointer-1&#x6CA1;&#x6709;&#x533A;&#x522B;&#xFF0C;&#x8FD9;&#x4E24;&#x6BB5;&#x4EE3;&#x7801;&#x5728;LeetCode&#x4E0A;&#x7684;&#x8FD0;&#x884C;&#x65F6;&#x95F4;&#x90FD;&#x8D85;&#x8FC7;&#x4E86;1000ms&#xFF0C;&#x6548;&#x7387;&#x76F8;&#x5F53;&#x7CDF;&#x7CD5;&#x3002;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x60F3;&#x529E;&#x6CD5;&#x4F18;&#x5316;&#x8FD9;&#x6BB5;&#x4EE3;&#x7801;&#x3002;&#x5BB9;&#x6613;&#x53D1;&#x73B0;&#xFF0C;Code-FastSlowPointer-2&#x4F7F;&#x7528;&#x9996;&#x5143;&#x7D20;&#x4F5C;&#x4E3A;&#x67A2;&#x7EBD;&#xFF0C;&#x8FD9;&#x662F;&#x4E0D;&#x5408;&#x9002;&#x7684;&#x3002;&#x6839;&#x636E;&#x4E4B;&#x524D;&#x7684;&#x7ECF;&#x9A8C;&#xFF0C;&#x6211;&#x731C;&#x6D4B;&#x4F7F;&#x7528;&#x4E2D;&#x95F4;&#x5143;&#x7D20;&#x4F5C;&#x4E3A;&#x67A2;&#x7EBD;&#x53EF;&#x4EE5;&#x63D0;&#x9AD8;&#x6548;&#x7387;&#xFF0C;&#x4E8E;&#x662F;&#x6709;&#x4E86;&#x4E0B;&#x9762;&#x7684;&#x4EE3;&#x7801;</p>
+<h5 id="code-fastslowpointer-3">Code-FastSlowPointer-3</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        <span class="hljs-keyword">if</span>(nums == <span class="hljs-keyword">null</span> || nums.length == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> nums;
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = nums[pivotPos];
+        swap(nums, start, pivotPos);
+        <span class="hljs-keyword">int</span> slow = start;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> fast = start + <span class="hljs-number">1</span>; fast &lt;= end; ++fast){
+            <span class="hljs-keyword">if</span>(nums[fast] &lt; pivot){
+                swap(nums, fast, ++slow);
+            }
+        }
+        swap(nums, start, slow);
+        quickSort(nums, start, slow - <span class="hljs-number">1</span>);
+        quickSort(nums, slow + <span class="hljs-number">1</span>, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h2 id="&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#xFF0C;&#x4E2D;&#x4F4D;&#x6570;&#xFF0C;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;">&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;(&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#xFF0C;&#x4E2D;&#x4F4D;&#x6570;&#xFF0C;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;)</h2>
+<p>&#x7ECF;&#x8FC7;&#x524D;&#x9762;&#x7684;&#x5206;&#x6790;&#xFF0C;&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x5982;&#x679C;&#x8981;&#x4F7F;&#x7528;&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#x7684;&#x65B9;&#x6CD5;&#x628A;&#x67A2;&#x7EBD;&#x653E;&#x5230;&#x6B63;&#x786E;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x90A3;&#x4E48;&#x5FC5;&#x987B;&#x5148;&#x628A;&#x67A2;&#x7EBD;&#x79FB;&#x5230;&#x5916;&#x9762;&#x3002;&#x5047;&#x5982;&#x6570;&#x7EC4;&#x5DF2;&#x7ECF;&#x6709;&#x5E8F;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x4E9B;&#x4EE3;&#x7801;&#x4F1A;&#x5E26;&#x6765;&#x4E0D;&#x5FC5;&#x8981;&#x7684;&#x4EA4;&#x6362;&#x3002;&#x90A3;&#x4E48;&#xFF0C;&#x6211;&#x4EEC;&#x80FD;&#x5426;&#x50CF;[LeetCode 905. &#x6309;&#x5947;&#x5076;&#x6392;&#x5E8F;&#x6570;&#x7EC4;]&#x90A3;&#x6837;&#x76F4;&#x63A5;&#x4F7F;&#x7528;&#x53CC;&#x6307;&#x9488;&#xFF0C;&#x5BB9;&#x5FCD;&#x67A2;&#x7EBD;&#x6CA1;&#x6709;&#x653E;&#x5230;&#x6B63;&#x786E;&#x7684;&#x4F4D;&#x7F6E;&#x7684;&#x60C5;&#x51B5;&#x5462;&#xFF1F;&#x7B54;&#x6848;&#x662F;&#x53EF;&#x4EE5;&#x7684;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x964D;&#x4F4E;&#x5BF9;&#x5212;&#x5206;&#x51FD;&#x6570;&#x7684;&#x8981;&#x6C42;&#xFF0C;&#x6211;&#x4EEC;&#x628A;&#x6570;&#x7EC4;&#x5212;&#x5206;&#x6210;&#x4E24;&#x90E8;&#x5206;&#xFF0C;&#x5DE6;&#x8FB9;&#x7684;&#x5143;&#x7D20;&#x90FD;&#x5C0F;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#xFF0C;&#x53F3;&#x8FB9;&#x7684;&#x5143;&#x7D20;&#x90FD;&#x5927;&#x4E8E;&#x7B49;&#x4E8E;&#x67A2;&#x7EBD;&#xFF0C;&#x4F46;&#x4E0D;&#x8981;&#x6C42;&#x67A2;&#x7EBD;&#x653E;&#x5728;&#x4E24;&#x4E2A;&#x5B50;&#x6570;&#x7EC4;&#x4E2D;&#x95F4;&#x3002;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x5220;&#x9664;&#x4FEE;&#x6539;Code-DoublePointer-Swap-Mid-1&#xFF0C;2&#xFF0C;3&#x4E2D;&#x7684;&#x90E8;&#x5206;&#x4EE3;&#x7801;&#x3002;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x77E5;&#x9053;left&#x8D8A;&#x8FC7;&#x4E86;&#x4E24;&#x4E2A;&#x5B50;&#x6570;&#x7EC4;&#x7684;&#x4E2D;&#x95F4;&#x8FB9;&#x754C;&#xFF0C;&#x56E0;&#x6B64;&#x9700;&#x8981;&#x5BF9;&#x95ED;&#x533A;&#x95F4;[start, left - 1]&#x548C;[left, end]&#x8FDB;&#x884C;&#x9012;&#x5F52;&#x3002;&#x4E4B;&#x524D;&#x5199;&#x7684;&#x6240;&#x6709;&#x4EE3;&#x7801;&#x7684;left&#x6307;&#x9488;&#x90FD;&#x6CA1;&#x6709;&#x8D8A;&#x754C;&#xFF0C;&#x56E0;&#x6B64;&#x95ED;&#x533A;&#x95F4;[start, left - 1]&#x548C;[left + 1, end]&#x80AF;&#x5B9A;&#x90FD;&#x6BD4;&#x539F;&#x533A;&#x95F4;&#x5C0F;&#x3002;&#x7136;&#x800C;&#xFF0C;&#x5982;&#x679C;left == start&#xFF0C;&#x90A3;&#x4E48;&#x95ED;&#x533A;&#x95F4;[left, end]&#x4E0E;&#x539F;&#x533A;&#x95F4;&#x76F8;&#x540C;&#xFF0C;&#x6B64;&#x65F6;&#x9012;&#x5F52;&#x65E0;&#x6CD5;&#x505C;&#x6B62;&#x3002;&#x53C8;&#x6216;&#x8005;&#xFF0C;left == end + 1&#xFF0C;&#x90A3;&#x4E48;&#x95ED;&#x533A;&#x95F4;[start, left - 1]&#x4E0E;&#x539F;&#x533A;&#x95F4;&#x76F8;&#x540C;&#x3002;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x4E2D;&#x4F4D;&#x6570;&#x7684;&#x5212;&#x5206;&#xFF0C;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x5F88;&#x5BB9;&#x6613;&#x89E3;&#x51B3;&#xFF0C;&#x56E0;&#x4E3A;&#x8FD9;&#x4E9B;&#x4EE3;&#x7801;&#x672C;&#x8EAB;&#x5C31;&#x53EF;&#x4EE5;&#x786E;&#x4FDD;left&#x6307;&#x9488;&#x5728;&#x5DE6;&#x5F00;&#x53F3;&#x95ED;&#x533A;&#x95F4;(start, end]&#x5185;&#x3002;</p>
+<h5 id="code-doublepointer-swap-mid-noswap-1">Code-DoublePointer-Swap-Mid-NoSwap-1</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span></span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> midPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[midPos]) swap(array, start, midPos);
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[end]) swap(array, start, end);
+        <span class="hljs-keyword">if</span>(array[midPos] &gt; array[end]) swap(array, midPos, end);
+        <span class="hljs-keyword">int</span> left = start + <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">int</span> right = end - <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[midPos];
+        <span class="hljs-keyword">for</span> (; ; ++left, --right){
+            <span class="hljs-keyword">while</span> (array[left] &lt; pivot) ++left;
+            <span class="hljs-keyword">while</span> (array[right] &gt; pivot) --right;
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h5 id="code-doublepointer-swap-mid-noswap-2">Code-DoublePointer-Swap-Mid-NoSwap-2</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> midPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[midPos]) swap(array, start, midPos);
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[end]) swap(array, start, end);
+        <span class="hljs-keyword">if</span>(array[midPos] &gt; array[end]) swap(array, midPos, end);
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[midPos];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> right = end; left &lt; right;){
+            <span class="hljs-keyword">while</span> (array[++left] &lt; pivot){}
+            <span class="hljs-keyword">while</span> (array[--right] &gt; pivot){}
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h5 id="code-doublepointer-swap-mid-noswap-3">Code-DoublePointer-Swap-Mid-NoSwap-3</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> midPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[midPos]) swap(array, start, midPos);
+        <span class="hljs-keyword">if</span>(array[start] &gt; array[end]) swap(array, start, end);
+        <span class="hljs-keyword">if</span>(array[midPos] &gt; array[end]) swap(array, midPos, end);
+        <span class="hljs-keyword">if</span>(start + <span class="hljs-number">2</span> &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[midPos];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> right = end; ;){
+            <span class="hljs-keyword">while</span> (array[++left] &lt; pivot){}
+            <span class="hljs-keyword">while</span> (array[--right] &gt; pivot){}
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h2 id="&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#xFF0C;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;">&#x53CC;&#x6307;&#x9488;&#x5212;&#x5206;(&#x76F4;&#x63A5;&#x4EA4;&#x6362;&#xFF0C;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;)</h2>
+<p>&#x4E5F;&#x53EF;&#x4EE5;&#x6539;&#x5199;Code-DoublePointer-Swap-1&#x3002;&#x8003;&#x8651;&#x5230;left&#x9700;&#x8981;&#x5728;&#x5DE6;&#x5F00;&#x53F3;&#x95ED;&#x533A;&#x95F4;(start, end]&#x5185;&#xFF0C;&#x5982;&#x679C;pivot&#x662F;&#x6700;&#x5C0F;&#x503C;&#xFF0C;&#x90A3;&#x4E48;right&#x4F1A;&#x79FB;&#x5230;&#x6307;&#x5411;&#x9996;&#x5143;&#x7D20;&#xFF0C;&#x6B64;&#x65F6;left == right&#x3002;&#x672C;&#x6765;&#x8FD9;&#x65F6;&#x5DF2;&#x7ECF;&#x4E0D;&#x9700;&#x8981;&#x4EA4;&#x6362;&#x4E86;&#xFF0C;&#x4F46;&#x662F;&#x4E3A;&#x4E86;&#x8BA9;left&#x4E0D;&#x7B49;&#x4E8E;start&#xFF0C;&#x6211;&#x8BA9;left == right&#x65F6;&#x518D;&#x8FDB;&#x884C;&#x4E00;&#x6B21;&#x4EA4;&#x6362;&#xFF0C;&#x5373;&#x628A;if&#x7684;&#x6761;&#x4EF6;&#x6539;&#x6210; left &gt; right&#x3002;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
+<h5 id="code-doublepointer-swap-noswap-1">Code-DoublePointer-Swap-NoSwap-1</h5>
+<h6 id="pivotpos--start--end--1">pivotPos = (start + end) &gt;&gt; 1</h6>
+<h6 id="pivotpos--start">pivotPos = start</h6>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span></span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;<span class="hljs-comment">//start&#x4E5F;&#x53EF;</span>
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> right = end; ; ++left, --right){
+            <span class="hljs-keyword">while</span> (array[left] &lt; pivot) ++left;
+            <span class="hljs-comment">//while (left &lt; right &amp;&amp; array[left] &lt; pivot) ++left; &#x4E5F;&#x53EF;</span>
+            <span class="hljs-keyword">while</span> (left &lt;= right &amp;&amp; array[right] &gt; pivot) --right;
+            <span class="hljs-keyword">if</span>(left &gt; right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h6 id="pivotpos--end">pivotPos = end</h6>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span></span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = end;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = array[pivotPos];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> right = end; ; ++left, --right){
+            <span class="hljs-keyword">while</span> (left &lt;= right &amp;&amp; array[left] &lt; pivot) ++left;
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; array[right] &gt; pivot) --right;
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(array, left, right);
+        }
+        quickSort(array, start, left - <span class="hljs-number">1</span>);
+        quickSort(array, left, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<p>&#x524D;&#x9762;&#x7684;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x7684;&#x4EE3;&#x7801;&#x90FD;&#x6CA1;&#x6709;&#x4F7F;&#x7528;&#x65B9;&#x6848;2&#xFF0C;&#x56E0;&#x4E3A;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x672C;&#x8EAB;&#x5C31;&#x6BD4;&#x8F83;&#x590D;&#x6742;&#xFF0C;&#x800C;&#x65B9;&#x6848;2&#x4F1A;&#x5E26;&#x6765;&#x66F4;&#x591A;&#x95EE;&#x9898;&#x3002;&#x6211;&#x5C1D;&#x8BD5;&#x4F7F;&#x7528;&#x65B9;&#x6848;2&#x7F16;&#x5199;&#x4E86;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x7684;&#x4EE3;&#x7801;&#xFF0C;&#x4E0D;&#x8FC7;&#x8FD9;&#x4E2A;&#x4EE3;&#x7801;&#x8FD8;&#x4E0D;&#x662F;&#x5BF9;&#x7684;&#x3002;&#x8003;&#x8651;&#x6570;&#x7EC4;[0, 1, 1, 0]&#xFF0C;&#x67A2;&#x7EBD;&#x7B49;&#x4E8E;1&#x3002;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x65B9;&#x6848;1&#xFF0C;&#x6211;&#x4EEC;&#x4F1A;&#x8BA9;&#x6700;&#x5DE6;&#x8FB9;&#x7684;1&#x8DDF;&#x6700;&#x53F3;&#x8FB9;&#x7684;0&#x4EA4;&#x6362;&#xFF0C;&#x8FD9;&#x53EF;&#x4EE5;&#x5F97;&#x5230;&#x6B63;&#x786E;&#x7684;&#x7ED3;&#x679C;&#x3002;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x65B9;&#x6848;2&#xFF0C;&#x90A3;&#x4E48;&#x4F1A;&#x8DF3;&#x8FC7;&#x6240;&#x6709;&#x7684;1&#xFF0C;&#x7ED3;&#x679C;&#x4F9D;&#x7136;&#x662F;[0, 1, 1, 0]&#x3002;&#x4EE3;&#x7801;&#x5982;&#x4E0B;</p>
+<h5 id="code-doublepointer-swap-noswap-error-1">Code-DoublePointer-Swap-NoSwap-ERROR-1</h5>
+<pre><code class="lang-java"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Solution</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] sortArray(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums) {
+        <span class="hljs-keyword">if</span>(nums == <span class="hljs-keyword">null</span> || nums.length == <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> nums;
+        quickSort(nums, <span class="hljs-number">0</span>, nums.length - <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> nums;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">quickSort</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] nums, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> start, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> end)</span></span>{
+        <span class="hljs-keyword">if</span>(start &gt;= end) <span class="hljs-keyword">return</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivotPos = (start + end) &gt;&gt; <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> pivot = nums[pivotPos];
+        <span class="hljs-keyword">int</span> left = start;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> right = end; ; ){
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; nums[left] &lt;= pivot) ++left;
+            <span class="hljs-keyword">while</span> (left &lt; right &amp;&amp; nums[right] &gt;= pivot) --right;
+            <span class="hljs-keyword">if</span>(left &gt;= right) <span class="hljs-keyword">break</span>;
+            swap(nums, left++, right--);
+        }
+        quickSort(nums, start, left - <span class="hljs-number">1</span>);
+        quickSort(nums, left, end);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(<span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span>[] array, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> i, <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> j)</span></span>{
+        <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+</code></pre>
+<h2 id="&#x603B;&#x7ED3;">&#x603B;&#x7ED3;</h2>
+<ol>
+<li>&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x7684;&#x7EC6;&#x8282;&#x5F88;&#x591A;&#xFF0C;&#x4E5F;&#x5F88;&#x590D;&#x6742;&#x3002;&#x5982;&#x679C;&#x53EA;&#x662F;&#x4E3A;&#x4E86;&#x5E94;&#x4ED8;&#x9762;&#x8BD5;&#xFF0C;&#x5EFA;&#x8BAE;&#x76F4;&#x63A5;&#x9ED8;&#x5199;&#x4E8B;&#x5148;&#x51C6;&#x5907;&#x597D;&#x7684;&#x4EE3;&#x7801;&#xFF0C;&#x6BD4;&#x5982;Code-DoublePointer-Swap-Mid-1&#x6216;Code-DoublePointer-Swap-Mid-3&#x3002;&#x5EFA;&#x8BAE;&#x4E0D;&#x8981;&#x73B0;&#x573A;&#x5199;&#x4E4B;&#x524D;&#x6CA1;&#x9A8C;&#x8BC1;&#x8FC7;&#x7684;&#x6BD4;&#x8F83;&#x590D;&#x6742;&#x7684;&#x4EE3;&#x7801;&#x3002;</li>
+<li>&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x7684;&#x5206;&#x6790;&#x6BD4;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x590D;&#x6742;&#x8BB8;&#x591A;&#xFF0C;&#x4EE3;&#x7801;&#x6709;&#x5F88;&#x591A;&#x5751;&#xFF0C;&#x975E;&#x5E38;&#x5BB9;&#x6613;&#x5199;&#x9519;&#xFF0C;&#x76EE;&#x524D;&#x5E76;&#x6CA1;&#x6709;&#x53D1;&#x73B0;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x7684;&#x4EE3;&#x7801;&#x7684;&#x8FD0;&#x884C;&#x6548;&#x7387;&#x6709;&#x660E;&#x663E;&#x63D0;&#x9AD8;&#x3002;&#x6B64;&#x5916;&#xFF0C;&#x7531;&#x4E8E;&#x6CA1;&#x6709;&#x628A;&#x67A2;&#x7EBD;&#x653E;&#x5230;&#x6B63;&#x786E;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x50CF;<a href="https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/" target="_blank">&#x5251;&#x6307; Offer 40. &#x6700;&#x5C0F;&#x7684;k&#x4E2A;&#x6570;</a>&#x8FD9;&#x6837;&#x7684;&#x9898;&#x4E5F;&#x4E0D;&#x80FD;&#x7528;&#x8FD9;&#x79CD;&#x4EE3;&#x7801;&#x3002;&#x4E0D;&#x79FB;&#x51FA;&#x67A2;&#x7EBD;&#x7684;&#x5B9E;&#x7528;&#x6027;&#x53EF;&#x80FD;&#x4E0D;&#x5927;&#xFF0C;&#x672C;&#x6587;&#x5BF9;&#x6B64;&#x7684;&#x8BA8;&#x8BBA;&#x5230;&#x6B64;&#x4E3A;&#x6B62;&#x3002;</li>
+<li>&#x65E0;&#x8BBA;&#x662F;&#x5FEB;&#x901F;&#x6392;&#x5E8F;&#x8FD8;&#x662F;&#x5176;&#x4ED6;&#x7684;&#x53CC;&#x6307;&#x9488;&#x9898;&#x76EE;&#xFF0C;&#x90FD;&#x9700;&#x8981;&#x6CE8;&#x610F;&#x6307;&#x9488;&#x8D8A;&#x754C;&#xFF0C;&#x6307;&#x9488;&#x76F8;&#x9047;&#x7684;&#x5904;&#x7406;&#x3002;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x4E86;&#x9012;&#x5F52;&#xFF0C;&#x8FD8;&#x5FC5;&#x987B;&#x786E;&#x4FDD;&#x5B50;&#x95EE;&#x9898;&#x90FD;&#x6BD4;&#x539F;&#x95EE;&#x9898;&#x5C0F;&#x3002;</li>
+</ol>
+<blockquote id="fn_1">
+<sup>1</sup>. &#x6570;&#x636E;&#x7ED3;&#x6784;&#x4E0E;&#x7B97;&#x6CD5;&#x5206;&#x6790; C&#x8BED;&#x8A00;&#x63CF;&#x8FF0;&#xFF08;&#x539F;&#x4E66;&#x7B2C;2&#x7248;&#xFF09;&#x5178;&#x85CF;&#x7248;&#xFF0C;[&#x7F8E;] &#x9A6C;&#x514B;&#xB7;&#x827E;&#x4F26;&#xB7;&#x7EF4;&#x65AF;&#xFF08;Mark.Allen.Weiss)&#xFF0C;&#x673A;&#x68B0;&#x5DE5;&#x4E1A;&#x51FA;&#x7248;&#x793E;&#xFF0C;2019<a href="#reffn_1" title="Jump back to footnote [1] in the text."> &#x21A9;</a>
+</blockquote>
+<blockquote id="fn_2">
+<sup>2</sup>. &#x6570;&#x636E;&#x7ED3;&#x6784;&#xFF0C;&#x5434;&#x4F1F;&#x6C11;/&#x674E;&#x5C0F;&#x59B9;&#xFF0C;&#x9AD8;&#x7B49;&#x6559;&#x80B2;&#x51FA;&#x7248;&#x793E;&#xFF0C;2017<a href="#reffn_2" title="Jump back to footnote [2] in the text."> &#x21A9;</a>
+</blockquote>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="vm-route.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 使用虚拟机作为路由器-20211225">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"快速排序的细节-20211006","level":"1.3","depth":1,"previous":{"title":"使用虚拟机作为路由器-20211225","level":"1.2","depth":1,"path":"vm-route.md","ref":"vm-route.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"quick-sort.md","mtime":"2021-12-25T05:06:52.517Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-25T05:14:03.915Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
