@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>首页 · GitBook</title>
+        <title>OpenSSL使用笔记-20211226 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -57,8 +57,10 @@
     <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="openssl.html" />
+    <link rel="next" href="vm-route.html" />
     
+    
+    <link rel="prev" href="./" />
     
 
     </head>
@@ -87,7 +89,7 @@
         
         
     
-        <li class="chapter active" data-level="1.1" data-path="./">
+        <li class="chapter " data-level="1.1" data-path="./">
             
                 <a href="./">
             
@@ -100,7 +102,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2" data-path="openssl.html">
+        <li class="chapter active" data-level="1.2" data-path="openssl.html">
             
                 <a href="openssl.html">
             
@@ -169,7 +171,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >首页</a>
+        <a href="." >OpenSSL使用笔记-20211226</a>
     </h1>
 </div>
 
@@ -184,7 +186,22 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <p>&#x4E2A;&#x4EBA;&#x6280;&#x672F;&#x535A;&#x5BA2;(&#x6D4B;&#x8BD5;)</p>
+                                <h1 id="openssl&#x4F7F;&#x7528;&#x7B14;&#x8BB0;">OpenSSL&#x4F7F;&#x7528;&#x7B14;&#x8BB0;</h1>
+<pre><code class="lang-shell">openssl ecparam -name prime256v1 -genkey -noout -out client.key  #&#x751F;&#x6210;&#x79C1;&#x94A5;&#x548C;&#x516C;&#x94A5;
+openssl ec -text -noout -in client.key  #&#x67E5;&#x770B;&#x751F;&#x6210;&#x7684;&#x79C1;&#x94A5;&#x548C;&#x516C;&#x94A5;
+openssl req -new -newkey -x509 -sha256 -key client.key -out client.csr -subj &apos;/C=AU/ST=Some-State/L=/O=cert_center/OU=/CN=selfsigncsr/emailAddress=&apos;  #&#x751F;&#x6210;csr
+openssl req -noout -text -in client.csr  #&#x67E5;&#x770B;csr
+openssl req -new -x509 -sha256 -key ca.key -out ca.cer -days 10000 -subj &apos;/C=AU/ST=Some-State/L=/O=cert_center/OU=/CN=selfsignca/emailAddress=&apos;  #&#x751F;&#x6210;&#x81EA;&#x7B7E;&#x540D;CA&#x8BC1;&#x4E66;
+openssl x509 -in ca.cer -text -noout  #&#x67E5;&#x770B;&#x81EA;&#x7B7E;&#x540D;&#x8BC1;&#x4E66;
+
+mkdir -p ./demoCA/newcerts
+touch ./demoCA/index.txt
+&gt; ./demoCA/serial echo 00
+openssl ca -cert ca.cer -keyfile ca.key -in client.csr -out client.cer -days 3650  #&#x5BF9;csr&#x7B7E;&#x540D;
+
+cat client.key &gt;&gt; client.cer
+openssl pkcs12 -export -in client.cer -out client.p12 #&#x8F6C;p12&#x683C;&#x5F0F;
+</code></pre>
 
                                 
                                 </section>
@@ -212,8 +229,12 @@
 
             
                 
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: 首页">
+                    <i class="fa fa-angle-left"></i>
+                </a>
                 
-                <a href="openssl.html" class="navigation navigation-next navigation-unique" aria-label="Next page: OpenSSL使用笔记-20211226">
+                
+                <a href="vm-route.html" class="navigation navigation-next " aria-label="Next page: 使用虚拟机作为路由器-20211225">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -224,7 +245,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"首页","level":"1.1","depth":1,"next":{"title":"OpenSSL使用笔记-20211226","level":"1.2","depth":1,"path":"openssl.md","ref":"openssl.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2021-12-25T05:10:17.924Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-26T09:32:33.949Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"OpenSSL使用笔记-20211226","level":"1.2","depth":1,"next":{"title":"使用虚拟机作为路由器-20211225","level":"1.3","depth":1,"path":"vm-route.md","ref":"vm-route.md","articles":[]},"previous":{"title":"首页","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"openssl.md","mtime":"2021-12-26T09:29:26.322Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-26T09:32:33.949Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
