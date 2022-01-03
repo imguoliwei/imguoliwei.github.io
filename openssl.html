@@ -187,20 +187,36 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="openssl&#x4F7F;&#x7528;&#x7B14;&#x8BB0;">OpenSSL&#x4F7F;&#x7528;&#x7B14;&#x8BB0;</h1>
-<pre><code class="lang-shell">openssl ecparam -name prime256v1 -genkey -noout -out client.key  #&#x751F;&#x6210;&#x79C1;&#x94A5;&#x548C;&#x516C;&#x94A5;
-openssl ec -text -noout -in client.key  #&#x67E5;&#x770B;&#x751F;&#x6210;&#x7684;&#x79C1;&#x94A5;&#x548C;&#x516C;&#x94A5;
-openssl req -new -newkey -x509 -sha256 -key client.key -out client.csr -subj &apos;/C=AU/ST=Some-State/L=/O=cert_center/OU=/CN=selfsigncsr/emailAddress=&apos;  #&#x751F;&#x6210;csr
-openssl req -noout -text -in client.csr  #&#x67E5;&#x770B;csr
-openssl req -new -x509 -sha256 -key ca.key -out ca.cer -days 10000 -subj &apos;/C=AU/ST=Some-State/L=/O=cert_center/OU=/CN=selfsignca/emailAddress=&apos;  #&#x751F;&#x6210;&#x81EA;&#x7B7E;&#x540D;CA&#x8BC1;&#x4E66;
-openssl x509 -in ca.cer -text -noout  #&#x67E5;&#x770B;&#x81EA;&#x7B7E;&#x540D;&#x8BC1;&#x4E66;
-
+<pre><code class="lang-shell">cp /usr/lib/ssl/openssl.cnf .
+echo &quot;[ ext ]
+basicConstraints=critical,CA:TRUE,pathlen:0&quot; &gt;&gt; openssl.cnf
+# &#x751F;&#x6210;4096&#x4F4D;RSA&#x6839;&#x8BC1;&#x4E66;
+openssl genrsa -out ca.key 4096
+openssl rsa -text -noout -in ca.key
+openssl req -new -x509 -sha384 -key ca.key -out ca.cer -days 3650 -subj &apos;/C=/ST=/L=/O=/OU=/CN=ca/emailAddress=&apos;
+openssl x509 -text -noout -in ca.cer
+# &#x751F;&#x6210;256&#x4F4D;ECC&#x4E2D;&#x95F4;&#x8BC1;&#x4E66;&#x7B7E;&#x540D;&#x8BF7;&#x6C42;
+openssl ecparam -name prime256v1 -genkey -noout -out mid.key
+openssl ec -text -noout -in mid.key
+openssl req -new -newkey -x509 -sha256 -key mid.key -out mid.csr -subj &apos;/C=/ST=/L=/O=/OU=/CN=mid/emailAddress=&apos;
+openssl req -noout -text -in mid.csr
+# &#x5BF9;csr&#x7B7E;&#x540D;
 mkdir -p ./demoCA/newcerts
 touch ./demoCA/index.txt
-&gt; ./demoCA/serial echo 00
-openssl ca -cert ca.cer -keyfile ca.key -in client.csr -out client.cer -days 3650  #&#x5BF9;csr&#x7B7E;&#x540D;
-
+openssl ca -notext -create_serial -policy policy_anything -cert ca.cer -keyfile ca.key -in mid.csr -out mid.cer -days 365 -config openssl.cnf -extensions ext
+openssl verify -CAfile ca.cer mid.cer
+# &#x4F7F;&#x7528;&#x4E2D;&#x95F4;&#x8BC1;&#x4E66;&#x5BF9;&#x6700;&#x7EC8;Ed25519&#x8BC1;&#x4E66;&#x7B7E;&#x540D;
+openssl genpkey -algorithm ed25519 -out client.key
+openssl pkey -text -noout -in client.key
+openssl req -new -newkey -x509 -sha256 -key client.key -out client.csr -subj &apos;/C=/ST=/L=/O=/OU=/CN=client/emailAddress=&apos;
+openssl ca -notext -create_serial -policy policy_anything -cert mid.cer -keyfile mid.key -in client.csr -out client.cer -days 10
+# &#x9A8C;&#x8BC1;&#x8BC1;&#x4E66;
+cp ca.cer cas.cer
+cat mid.cer &gt;&gt; cas.cer
+openssl verify -CAfile cas.cer client.cer
+#&#x8F6C;p12&#x683C;&#x5F0F;
 cat client.key &gt;&gt; client.cer
-openssl pkcs12 -export -in client.cer -out client.p12 #&#x8F6C;p12&#x683C;&#x5F0F;
+openssl pkcs12 -export -in client.cer -out client.p12
 </code></pre>
 
                                 
@@ -245,7 +261,7 @@ openssl pkcs12 -export -in client.cer -out client.p12 #&#x8F6C;p12&#x683C;&#x5F0
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"OpenSSL使用笔记-20211226","level":"1.2","depth":1,"next":{"title":"使用虚拟机作为路由器-20211225","level":"1.3","depth":1,"path":"vm-route.md","ref":"vm-route.md","articles":[]},"previous":{"title":"首页","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"openssl.md","mtime":"2021-12-26T09:29:26.322Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-12-26T09:32:33.949Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"OpenSSL使用笔记-20211226","level":"1.2","depth":1,"next":{"title":"使用虚拟机作为路由器-20211225","level":"1.3","depth":1,"path":"vm-route.md","ref":"vm-route.md","articles":[]},"previous":{"title":"首页","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"openssl.md","mtime":"2022-01-03T07:18:05.885Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-01-03T07:19:37.967Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
